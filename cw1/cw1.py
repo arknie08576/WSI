@@ -20,7 +20,7 @@ def gradient_g(x1, x2):
     return np.array([df_dx1, df_dx2])
 
 # Gradient Descent Implementation
-def gradient_descent(fun, gradient, initial_point, beta=0.01, max_iterations=10000, treshold=1e-7):
+def gradient_descent(fun, gradient, initial_point, beta, max_iterations=10000, treshold=1e-7):
     x = np.array(initial_point, dtype=float)  # Ensure x is a NumPy array
     path = [x.copy()]
     
@@ -106,7 +106,7 @@ for beta in betas:
         plt.ylim(-100, 3000)  # Set y-axis limits from -100 to 3000
         plt.xlabel('x')
         plt.ylabel('f(x)')
-        plt.title('Plot of f(x) with ' + str(beta) + ' as beta and ' + str(initial_point_for_f) + ' as initial point')
+        plt.title(f"Plot of f(x) with β={beta} and initial point {initial_point_for_f:.2f}")
         plt.grid()
         plt.legend()
         #plt.show()
