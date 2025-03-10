@@ -77,7 +77,7 @@ results_g=[]
 # Generate a set of 10 unique random numbers between -4 and 4
 random_set_for_f = set(np.round(np.random.uniform(-4, 4, 10), 2))
 
-# Generate 10 random (x, y) points in the given range
+# Generate 10 random (x1, x2) points in the given range
 random_set_for_g = {(np.round(np.random.uniform(-5, 8), 2), np.round(np.random.uniform(-13, 8), 2)) for iteration in range(10)}
 
 
@@ -102,8 +102,8 @@ for beta in betas:
         
         plt.plot(x_vals, y_vals, label='f(x)')
         plt.plot(path_f, f_vals, 'r.-', label='Gradient Descent Path')
-        plt.xlim(-4, 4)  # Set x-axis limits from -5 to 5
-        plt.ylim(-100, 3000)  # Set y-axis limits from -2 to 10
+        plt.xlim(-4, 4)  # Set x-axis limits from -4 to 4
+        plt.ylim(-100, 3000)  # Set y-axis limits from -100 to 3000
         plt.xlabel('x')
         plt.ylabel('f(x)')
         plt.title('Plot of f(x) with ' + str(beta) + ' as beta and ' + str(initial_point_for_f) + ' as initial point')
@@ -113,6 +113,7 @@ for beta in betas:
         plt.show(block=False)  # Show without blocking execution
         plt.pause(1)  # Wait for 1 second
         plt.close()  # Close the figure
+
 for beta in betas:
 
     for initial_point_for_g in random_set_for_g:
@@ -133,11 +134,14 @@ for beta in betas:
         
         plt.contourf(x1_vals, x2_vals, z_vals, levels=50, cmap='viridis')
         plt.plot(path_g[:, 0], path_g[:, 1], 'r.-', label='Gradient Descent Path')
-        plt.xlim(-5, 8)  # Set x-axis limits from -5 to 5
-        plt.ylim(-13, 8)  # Set y-axis limits from -2 to 10
-        plt.xlabel('x')
-        plt.ylabel('g(x)')
-        plt.title('Plot of g(x1, x2) with ' + str(beta) + ' as beta and ' + str(initial_point_for_g) + ' as initial point')
+        plt.xlim(-5, 8)  # Set x-axis limits from -5 to 8
+        plt.ylim(-13, 8)  # Set y-axis limits from -13 to 8
+        plt.xlabel('x1')
+        plt.ylabel('x2')
+        plt.colorbar(label='g(x1, x2)')
+        #plt.title('Plot of g(x1, x2) with ' + str(beta) + ' as beta and ' + str(initial_point_for_g) + ' as initial point')
+        plt.title(f"Plot of g(x1, x2) with β={beta} and initial point ({initial_point_for_g[0]:.2f}, {initial_point_for_g[1]:.2f})")
+
         plt.grid()
         plt.legend()
         #plt.show()
@@ -172,9 +176,9 @@ column_labels_g = ['Beta', 'Initial Point', 'Number of Steps', 'Result']
 # Create the table in ax2
 table_g = ax2.table(cellText=table_data_g, colLabels=column_labels_g, loc='center', cellLoc='center', bbox=[0, 0, 1, 1])
 table_f.auto_set_font_size(False)  # Disable automatic font size adjustment
-table_f.set_fontsize(11)  # Set the font size for the table text
+table_f.set_fontsize(9)  # Set the font size for the table text
 table_g.auto_set_font_size(False)  # Disable automatic font size adjustment
-table_g.set_fontsize(11)  # Set the font size for the table text
+table_g.set_fontsize(9)  # Set the font size for the table text
 # Adjust layout and display
 plt.tight_layout()  # Automatically adjust the subplots to fit into the figure area
 plt.show()
