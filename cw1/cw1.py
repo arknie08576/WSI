@@ -71,7 +71,7 @@ plt.show()
 
 # 2)
 # Generate betas
-betas = np.array([0.1, 0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001])
+betas = np.array([0.05, 0.01, 0.005, 0.003, 0.001, 0.008, 0.0005, 0.0001, 0.000001])
 results_f=[]
 results_g=[]
 # Generate a set of 10 unique random numbers between -4 and 4
@@ -111,7 +111,7 @@ for beta in betas:
         plt.legend()
         #plt.show()
         plt.show(block=False)  # Show without blocking execution
-        plt.pause(1)  # Wait for 1 second
+        #plt.pause(1)  # Wait for 1 second
         plt.close()  # Close the figure
 
 for beta in betas:
@@ -146,7 +146,7 @@ for beta in betas:
         plt.legend()
         #plt.show()
         plt.show(block=False)  # Show without blocking execution
-        plt.pause(1)  # Wait for 1 second
+        #plt.pause(1)  # Wait for 1 second
         plt.close()  # Close the figure
 fig, (ax1, ax2) = plt.subplots(figsize=(12, 6), nrows=1, ncols=2)
 
