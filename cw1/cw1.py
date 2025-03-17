@@ -25,18 +25,18 @@ def gradient_descent(fun, gradient, initial_point, beta, max_iterations=10000, t
     path = [x.copy()]
     
     for iteration in range(max_iterations):
-        if x.ndim == 0:  # If x is a scalar (1D case)
+        if x.ndim == 0:  # If x is a scalar
             gradient_value = gradient(x)
-        else:  # If x is a vector (multi-dimensional case)
+        else:  # If x is a vector
             gradient_value = gradient(*x)
         
         x -= beta * gradient_value  # Update x
-        path.append(x.copy())
+        path.append(x.copy())  # Update path
 
-        if x.ndim == 0:  # If x is a scalar (1D case)
+        if x.ndim == 0:  # If x is a scalar
             if abs(fun(path[-1])-fun(path[-2])) < treshold:
                 break
-        else:  # If x is a vector (multi-dimensional case)
+        else:  # If x is a vector
             if abs(fun(*path[-1])-fun(*path[-2])) < treshold:
                 break
     
@@ -91,7 +91,7 @@ for beta in betas:
         x_vals = np.linspace(-4, 4, 400)
         y_vals = f(x_vals)
         f_vals = np.array([f(x) for x in path_f])
-        results_f.append({
+        results_f.append({  # Collect results
             'Beta': beta,
             'Initial Point': initial_point_for_f,
             'Number of Steps': len(path_f)-1,
@@ -109,9 +109,8 @@ for beta in betas:
         plt.title(f"Plot of f(x) with β={beta} and initial point {initial_point_for_f:.2f}")
         plt.grid()
         plt.legend()
-        #plt.show()
         plt.show(block=False)  # Show without blocking execution
-        #plt.pause(1)  # Wait for 1 second
+        plt.pause(1)  # Wait for 1 second
         plt.close()  # Close the figure
 
 for beta in betas:
@@ -119,11 +118,11 @@ for beta in betas:
     for initial_point_for_g in random_set_for_g:
         min_g, path_g = gradient_descent(g, gradient_g, initial_point_for_g, beta)
 
-        x_vals = np.linspace(-4, 4, 400)
-        y_vals = f(x_vals)
-        f_vals = np.array([f(x) for x in path_f])
+        x1_vals, x2_vals = np.meshgrid(np.linspace(-5, 8, 100), np.linspace(-13, 8, 100))
+        z_vals = g(x1_vals, x2_vals)
+
         path_g = np.array(path_g)
-        results_g.append({
+        results_g.append({  # Collect results
             'Beta': beta,
             'Initial Point': (float(initial_point_for_g[0]), float(initial_point_for_g[1])),  # Convert tuple values,
             'Number of Steps': len(path_g)-1,
@@ -139,14 +138,11 @@ for beta in betas:
         plt.xlabel('x1')
         plt.ylabel('x2')
         plt.colorbar(label='g(x1, x2)')
-        #plt.title('Plot of g(x1, x2) with ' + str(beta) + ' as beta and ' + str(initial_point_for_g) + ' as initial point')
         plt.title(f"Plot of g(x1, x2) with β={beta} and initial point ({initial_point_for_g[0]:.2f}, {initial_point_for_g[1]:.2f})")
-
         plt.grid()
         plt.legend()
-        #plt.show()
         plt.show(block=False)  # Show without blocking execution
-        #plt.pause(1)  # Wait for 1 second
+        plt.pause(1)  # Wait for 1 second
         plt.close()  # Close the figure
 fig, (ax1, ax2) = plt.subplots(figsize=(12, 6), nrows=1, ncols=2)
 
