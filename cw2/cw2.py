@@ -70,14 +70,54 @@ def genetic_algorithm(size=20, pop_size=50, generations=100, mutation_rate=0.1):
     
     best_solution = max(population, key=lambda sol: evaluate(sol, size))
     print('Best Solution Fitness:', evaluate(best_solution, size))
-    
-    # Visualization
-    best_grid = np.reshape(best_solution, (size, size))
-    plt.imshow(best_grid, cmap='gray')
-    plt.title("Best Solution")
-    plt.colorbar()
-    plt.show()
+
     
     return best_solution
 
 best = genetic_algorithm()
+size = 20
+# Random solution
+ran = np.random.randint(0, 2, (1, size * size))
+ran_grid = np.reshape(ran, (size, size))
+ran_solution = evaluate(ran)
+plt.imshow(ran_grid, cmap='gray')
+plt.title("Random Solution = " + str(ran_solution))
+plt.colorbar()
+plt.show()
+
+
+
+
+# Trivial solution
+grid = np.zeros((20, 20), dtype=int)
+
+# Alternate rows, starting with 1 for odd rows
+grid[1::2, ::2] = 1  # Odd rows, even columns
+grid[::2, 1::2] = 1  # Even rows, odd columns
+
+# Flatten the grid into a vector
+trivial = grid.flatten()
+# trivial = np.tile([0, 1], 200)
+trivial_grid = np.reshape(trivial, (size, size))
+trivial_solution = evaluate(trivial)
+plt.imshow(trivial_grid, cmap='gray')
+plt.title("Trivial Solution Chessboard = " + str(trivial_solution))
+plt.colorbar()
+plt.show()
+trivial = np.tile([0, 1], 200)
+trivial_grid = np.reshape(trivial, (size, size))
+trivial_solution = evaluate(trivial)
+plt.imshow(trivial_grid, cmap='gray')
+plt.title("Trivial Solution Zebra = " + str(trivial_solution))
+plt.colorbar()
+plt.show()
+
+
+# Visualization
+best_solution = evaluate(best)
+size = 20
+best_grid = np.reshape(best, (size, size))
+plt.imshow(best_grid, cmap='gray')
+plt.title("Best Solution = " + str(best_solution))
+plt.colorbar()
+plt.show()
