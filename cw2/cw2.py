@@ -14,6 +14,7 @@ def shift_t(x):
 def shift_b(x):
     return np.concatenate((x[..., 1:, :], np.zeros_like(x[..., :1, :])), axis=-2)
 
+# Evaluation function that scores the board based on adjacency rules
 def evaluate(x, size=20):
     assert np.shape(x)[-1] == size * size
     grid = np.asarray(np.reshape(x, (-1, size, size)), dtype=np.int_)
@@ -23,9 +24,11 @@ def evaluate(x, size=20):
     )
     return points.reshape(np.shape(x)).sum(-1)
 
+# Initialize population with random binary grids
 def initialize_population(pop_size, size):
-    return np.random.randint(0, 2, (pop_size, size * size))  # Binary grid (flattened)
+    return np.random.randint(0, 2, (pop_size, size * size))  # Binary grid
 
+# Select a solution using roulette wheel selection
 def roulette_wheel_selection(population, fitness):
     total_fitness = sum(fitness)
     if total_fitness == 0:
@@ -33,19 +36,22 @@ def roulette_wheel_selection(population, fitness):
     selection_probs = [f / total_fitness for f in fitness]
     return population[np.random.choice(len(population), p=selection_probs)]
 
+# Perform one-point crossover
 def one_point_crossover(parent1, parent2):
     point = random.randint(1, len(parent1) - 1)
     child1 = np.concatenate((parent1[:point], parent2[point:]))
     child2 = np.concatenate((parent2[:point], parent1[point:]))
     return child1, child2
 
+# Perform mutation by flipping bits
 def mutate(solution, mutation_rate):
     for i in range(len(solution)):
         if random.random() < mutation_rate:
-            solution[i] = 1 - solution[i]  # Flip bit (binary mutation)
+            solution[i] = 1 - solution[i]  # Flip bit - binary mutation
     return solution
 
-def genetic_algorithm(size=20, pop_size=50, generations=100, mutation_rate=0.1):
+# Genetic algorithm to optimize the board configuration
+def genetic_algorithm(size=20, pop_size=100, generations=500, mutation_rate=0.1):
     population = initialize_population(pop_size, size)
     
     for gen in range(generations):
@@ -64,18 +70,18 @@ def genetic_algorithm(size=20, pop_size=50, generations=100, mutation_rate=0.1):
         
         population = new_population[:pop_size]  # Maintain population size
         
-        if gen % 10 == 0:
-            best_fitness = max(fitness)
-            print(f'Generation {gen}, Best Fitness: {best_fitness}')
     
     best_solution = max(population, key=lambda sol: evaluate(sol, size))
-    print('Best Solution Fitness:', evaluate(best_solution, size))
+    print('Best Solution = ', evaluate(best_solution, size))
 
     
     return best_solution
 
+# Run the genetic algorithm
 best = genetic_algorithm()
 size = 20
+
+# Visualization of different solutions
 # Random solution
 ran = np.random.randint(0, 2, (1, size * size))
 ran_grid = np.reshape(ran, (size, size))
@@ -88,7 +94,7 @@ plt.show()
 
 
 
-# Trivial solution
+# Trivial solution (chessboard pattern)
 grid = np.zeros((20, 20), dtype=int)
 
 # Alternate rows, starting with 1 for odd rows
@@ -104,6 +110,8 @@ plt.imshow(trivial_grid, cmap='gray')
 plt.title("Trivial Solution Chessboard = " + str(trivial_solution))
 plt.colorbar()
 plt.show()
+
+# Trivial solution (zebra pattern)
 trivial = np.tile([0, 1], 200)
 trivial_grid = np.reshape(trivial, (size, size))
 trivial_solution = evaluate(trivial)
@@ -113,11 +121,29 @@ plt.colorbar()
 plt.show()
 
 
-# Visualization
+# Best solution
 best_solution = evaluate(best)
 size = 20
 best_grid = np.reshape(best, (size, size))
 plt.imshow(best_grid, cmap='gray')
 plt.title("Best Solution = " + str(best_solution))
 plt.colorbar()
+plt.show()
+
+# Evaluate different mutation rates
+mutation_rates = [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+best_scores = []
+
+for rate in mutation_rates:
+    print(f"Running genetic algorithm with mutation rate {rate}")
+    best_solution = genetic_algorithm(mutation_rate=rate)
+    best_score = evaluate(best_solution)
+    best_scores.append(best_score)
+
+# Plot the mutation rate vs best solution score
+plt.plot(mutation_rates, best_scores, marker='o', linestyle='-')
+plt.xlabel("Mutation Rate")
+plt.ylabel("Best Solution")
+plt.title("Effect of Mutation Rate on Genetic Algorithm Performance")
+plt.grid()
 plt.show()
