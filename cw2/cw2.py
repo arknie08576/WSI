@@ -37,21 +37,25 @@ def roulette_wheel_selection(population, fitness):
     return population[np.random.choice(len(population), p=selection_probs)]
 
 # Perform one-point crossover
-def one_point_crossover(parent1, parent2):
-    point = random.randint(1, len(parent1) - 1)
-    child1 = np.concatenate((parent1[:point], parent2[point:]))
-    child2 = np.concatenate((parent2[:point], parent1[point:]))
+def one_point_crossover(parent1, parent2, crossover_rate):
+    if random.random() <= crossover_rate:
+        point = random.randint(1, len(parent1) - 1)
+        child1 = np.concatenate((parent1[:point], parent2[point:]))
+        child2 = np.concatenate((parent2[:point], parent1[point:]))
+    else:
+        child1 = parent1
+        child2 = parent2
     return child1, child2
 
 # Perform mutation by flipping bits
 def mutate(solution, mutation_rate):
     for i in range(len(solution)):
-        if random.random() < mutation_rate:
+        if random.random() <= mutation_rate:
             solution[i] = 1 - solution[i]  # Flip bit - binary mutation
     return solution
 
 # Genetic algorithm to optimize the board configuration
-def genetic_algorithm(size=20, pop_size=100, generations=500, mutation_rate=0.1):
+def genetic_algorithm(size=20, pop_size=50, generations=100, mutation_rate=0.01, crossover_rate=0.7):
     population = initialize_population(pop_size, size)
     
     for gen in range(generations):
@@ -62,7 +66,7 @@ def genetic_algorithm(size=20, pop_size=100, generations=500, mutation_rate=0.1)
             parent1 = roulette_wheel_selection(population, fitness)
             parent2 = roulette_wheel_selection(population, fitness)
             
-            child1, child2 = one_point_crossover(parent1, parent2)
+            child1, child2 = one_point_crossover(parent1, parent2, crossover_rate)
             child1 = mutate(child1, mutation_rate)
             child2 = mutate(child2, mutation_rate)
             
@@ -131,19 +135,22 @@ plt.colorbar()
 plt.show()
 
 # Evaluate different mutation rates
-mutation_rates = [0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+gens = [10, 20, 30, 40, 50, 100, 200, 300, 400, 500]
 best_scores = []
 
-for rate in mutation_rates:
-    print(f"Running genetic algorithm with mutation rate {rate}")
-    best_solution = genetic_algorithm(mutation_rate=rate)
-    best_score = evaluate(best_solution)
-    best_scores.append(best_score)
+for gen in gens:
+    scores = []
+    for i in range (25):
+        print(f"Running genetic algorithm with generations {gen}")
+        best_solution = genetic_algorithm(generations=gen)
+        best_score = evaluate(best_solution)
+        scores.append(best_score)
+    best_scores.append(np.mean(scores))
 
-# Plot the mutation rate vs best solution score
-plt.plot(mutation_rates, best_scores, marker='o', linestyle='-')
-plt.xlabel("Mutation Rate")
+# Plot the generations vs best solution score
+plt.plot(gens, best_scores, marker='o', linestyle='-')
+plt.xlabel("Generations")
 plt.ylabel("Best Solution")
-plt.title("Effect of Mutation Rate on Genetic Algorithm Performance")
+plt.title("Effect of Generation number on Genetic Algorithm Performance")
 plt.grid()
 plt.show()
