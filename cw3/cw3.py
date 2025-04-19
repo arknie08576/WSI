@@ -1,6 +1,7 @@
 from two_player_games.games.connect_four import ConnectFour  # or any other game
 import random
 import matplotlib.pyplot as plt
+import os
 
 
 def score2(current_player, state):
@@ -141,7 +142,11 @@ def simulate_games(depth_player1, depth_player2, num_games=10, output_file="game
     """
     results = {"Player 1 Wins": 0, "Player 2 Wins": 0, "Draws": 0}
 
-    with open(str(depth_player1) + str(depth_player2) + output_file, "w") as file:  # Open the file for writing
+    # Ensure the file is created in the 'cw3' folder
+    folder_path = os.path.dirname(__file__)  # Get the directory of the current script
+    file_path = os.path.join(folder_path, str(depth_player1) + str(depth_player2) + output_file)  # Create the full file path
+
+    with open(file_path, "w") as file:  # Open the file for writing
         for game_number in range(1, num_games + 1):
             file.write(f"Simulating game {game_number}/{num_games} (Player 1 Depth: {depth_player1}, Player 2 Depth: {depth_player2})\n")
             print(f"Simulating game {game_number}/{num_games} (Player 1 Depth: {depth_player1}, Player 2 Depth: {depth_player2})\n")
