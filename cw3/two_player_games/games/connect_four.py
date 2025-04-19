@@ -124,6 +124,7 @@ class ConnectFourState(State):
     def get_all_lines(self):
         """
         Returns all rows, columns, and diagonals of the board as lists of characters.
+        Diagonals must have a minimum length of 4.
         """
         lines = []
 
@@ -136,22 +137,28 @@ class ConnectFourState(State):
             lines.append([field.char if field else '.' for field in column])
 
         # Add diagonals (top-left to bottom-right)
-        for col in range(len(self.fields) - 3):
-            for row in range(len(self.fields[0]) - 3):
-                diagonal = [
-                    self.fields[col + i][row + i].char if self.fields[col + i][row + i] else '.'
-                    for i in range(4)
-                ]
-                lines.append(diagonal)
+        for col in range(len(self.fields)):
+            for row in range(len(self.fields[0])):
+                diagonal = []
+                c, r = col, row
+                while c < len(self.fields) and r < len(self.fields[0]):
+                    diagonal.append(self.fields[c][r].char if self.fields[c][r] else '.')
+                    c += 1
+                    r += 1
+                if len(diagonal) >= 4:  # Only include diagonals with a minimum length of 4
+                    lines.append(diagonal)
 
         # Add diagonals (top-right to bottom-left)
-        for col in range(len(self.fields) - 3):
-            for row in range(3, len(self.fields[0])):
-                diagonal = [
-                    self.fields[col + i][row - i].char if self.fields[col + i][row - i] else '.'
-                    for i in range(4)
-                ]
-                lines.append(diagonal)
+        for col in range(len(self.fields)):
+            for row in range(len(self.fields[0])):
+                diagonal = []
+                c, r = col, row
+                while c < len(self.fields) and r >= 0:
+                    diagonal.append(self.fields[c][r].char if self.fields[c][r] else '.')
+                    c += 1
+                    r -= 1
+                if len(diagonal) >= 4:  # Only include diagonals with a minimum length of 4
+                    lines.append(diagonal)
 
         return lines
 
