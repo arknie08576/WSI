@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 
 
-def score2(current_player, state):
+def score2(current_player, state, maximizing_player):
     """
     Evaluates the game state for the Connect Four game.
     Positive scores favor the current player, and negative scores favor the opponent.
@@ -58,13 +58,25 @@ def score2(current_player, state):
         return score
 
     score = 0
-    score += count_sequencesX(current_player_char, 4)  # Winning move
-    score += count_sequencesX(current_player_char, 3)  # Three in a row
-    score += count_sequencesX(current_player_char, 2)  # Two in a row
 
-    score -= 2 * count_sequencesX(opponent_char, 4)  # Opponent's winning move
-    score -= count_sequencesX(opponent_char, 3)  # Opponent's three in a row
-    score -= count_sequencesX(opponent_char, 2)  # Opponent's two in a row
+    if(maximizing_player):
+        
+        score += count_sequencesX(current_player_char, 4)  # Winning move
+        score += count_sequencesX(current_player_char, 3)  # Three in a row
+        score += count_sequencesX(current_player_char, 2)  # Two in a row
+
+        score -= 2 * count_sequencesX(opponent_char, 4)  # Opponent's winning move
+        score -= count_sequencesX(opponent_char, 3)  # Opponent's three in a row
+        score -= count_sequencesX(opponent_char, 2)  # Opponent's two in a row
+    else:
+        
+        score -= count_sequencesX(current_player_char, 4)  # Winning move
+        score -= count_sequencesX(current_player_char, 3)  # Three in a row
+        score -= count_sequencesX(current_player_char, 2)  # Two in a row
+
+        score += 2 * count_sequencesX(opponent_char, 4)  # Opponent's winning move
+        score += count_sequencesX(opponent_char, 3)  # Opponent's three in a row
+        score += count_sequencesX(opponent_char, 2)  # Opponent's two in a row
 
     return score
 
@@ -89,7 +101,7 @@ def minimax(state, depth, alpha, beta, maximizing_player):
     if depth == 0 or state.is_finished():
         # Terminal state or maximum depth reached
         current_player = state.get_current_player()
-        return None, score2(current_player, state)  # Evaluate the state
+        return None, score2(current_player, state, maximizing_player)  # Evaluate the state
 
     if maximizing_player:
         max_eval = float('-inf')
