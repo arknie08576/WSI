@@ -20,61 +20,66 @@ data = pd.get_dummies(data, columns=categorical_columns, drop_first=True)
 X = data.drop(columns=['HeartDisease'])
 y = data['HeartDisease']
 
-# Split into training and test sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Split into training set (60%), validation set (20%), and test set (20%)
+X_train, X_temp, y_train, y_temp = train_test_split(
+    X, y, test_size=0.4, random_state=42
+)
+X_val, X_test, y_val, y_test = train_test_split(
+    X_temp, y_temp, test_size=0.5, random_state=42
+)
 
-# Train the random forest model
+# Train the model on the training set
 clf = RandomForestClassifier(n_estimators=100, random_state=42)
 clf.fit(X_train, y_train)
 
-# Predict on the test set
-y_pred = clf.predict(X_test)
-y_pred_proba = clf.predict_proba(X_test)[:, 1]
+# Prediction on the validation set
+y_pred_val = clf.predict(X_val)
+y_pred_proba_val = clf.predict_proba(X_val)[:, 1]
 
-# Calculate metrics
-accuracy = accuracy_score(y_test, y_pred)
-precision = precision_score(y_test, y_pred)
-recall = recall_score(y_test, y_pred)
-fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba)
-roc_auc = auc(fpr, tpr)
+# Metrics on the validation set
+accuracy_val = accuracy_score(y_val, y_pred_val)
+precision_val = precision_score(y_val, y_pred_val)
+recall_val = recall_score(y_val, y_pred_val)
+fpr_val, tpr_val, thresholds_val = roc_curve(y_val, y_pred_proba_val)
+roc_auc_val = auc(fpr_val, tpr_val)
 
-print(f"Accuracy: {accuracy:.2f}")
-print(f"Precision: {precision:.2f}")
-print(f"Recall: {recall:.2f}")
-print(f"Area Under the ROC Curve (AUC): {roc_auc:.2f}")
+print(f"Validation Accuracy: {accuracy_val:.2f}")
+print(f"Validation Precision: {precision_val:.2f}")
+print(f"Validation Recall: {recall_val:.2f}")
+print(f"Validation AUC: {roc_auc_val:.2f}")
 
-# Plot the ROC curve
-plt.figure()
-plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (AUC = {roc_auc:.2f})')
-plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
-plt.xlabel('False Positive Rate')
-plt.ylabel('True Positive Rate')
-plt.title('Receiver Operating Characteristic (ROC)')
-plt.legend(loc="lower right")
-plt.show()
-
-# Define the hyperparameter grid
+# Hyperparameter tuning on the training set using validation set
 param_grid = {'n_estimators': [50, 100, 200, 300, 500]}
 grid_search = GridSearchCV(RandomForestClassifier(random_state=42), param_grid, cv=5, scoring='roc_auc')
 grid_search.fit(X_train, y_train)
 
-# Best parameters
+# Best model
 best_params = grid_search.best_params_
 best_model = grid_search.best_estimator_
 
-# Predict with the best model
-y_pred_best = best_model.predict(X_test)
-y_pred_proba_best = best_model.predict_proba(X_test)[:, 1]
+# Prediction on the test set
+y_pred_test = best_model.predict(X_test)
+y_pred_proba_test = best_model.predict_proba(X_test)[:, 1]
 
-# Calculate metrics for the best model
-accuracy_best = accuracy_score(y_test, y_pred_best)
-precision_best = precision_score(y_test, y_pred_best)
-recall_best = recall_score(y_test, y_pred_best)
-fpr_best, tpr_best, thresholds_best = roc_curve(y_test, y_pred_proba_best)
-roc_auc_best = auc(fpr_best, tpr_best)
+# Metrics on the test set
+accuracy_test = accuracy_score(y_test, y_pred_test)
+precision_test = precision_score(y_test, y_pred_test)
+recall_test = recall_score(y_test, y_pred_test)
+fpr_test, tpr_test, thresholds_test = roc_curve(y_test, y_pred_proba_test)
+roc_auc_test = auc(fpr_test, tpr_test)
 
 print(f"Best parameters: {best_params}")
-print(f"Accuracy: {accuracy_best:.2f}")
-print(f"Precision: {precision_best:.2f}")
-print(f"Recall: {recall_best:.2f}")
-print(f"Area Under the ROC Curve (AUC): {roc_auc_best:.2f}")
+print(f"Test Accuracy: {accuracy_test:.2f}")
+print(f"Test Precision: {precision_test:.2f}")
+print(f"Test Recall: {recall_test:.2f}")
+print(f"Test AUC: {roc_auc_test:.2f}")
+
+#  ROC curve for the test set
+plt.figure()
+plt.plot(fpr_test, tpr_test, color='darkorange', lw=2, label=f'ROC curve (AUC = {roc_auc_test:.2f})')
+plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver Operating Characteristic (ROC) - Test Set')
+plt.legend(loc="lower right")
+plt.show()
