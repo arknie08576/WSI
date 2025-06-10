@@ -1,4 +1,3 @@
-
 import numpy as np
 import gymnasium as gym
 import random
@@ -79,14 +78,13 @@ def evaluate_agent(env, q_table, episodes=100):
 
 def plot_rewards(q_rewards, rand_rewards):
     plt.plot(q_rewards, label='Q-Learning')
-    plt.plot(rand_rewards, label='Random')
+    plt.plot(rand_rewards, label='Random Agent')
     plt.xlabel('Episode')
-    plt.ylabel('Total reward')
+    plt.ylabel('Total Reward')
     plt.title('Q-Learning vs Random Agent')
     plt.legend()
     plt.grid()
     plt.show()
-
 
 
 env = gym.make("CliffWalking-v0")
@@ -96,8 +94,8 @@ rand_rewards = random_agent(env)
 eval_stats = evaluate_agent(env, q_table)
 
 print("Q-Learning Evaluation:")
-print(f"Średnia nagroda: {eval_stats['mean']:.2f}")
-print(f"Odchylenie standardowe: {eval_stats['std']:.2f}")
+print(f"Mean Reward: {eval_stats['mean']:.2f}")
+print(f"Standard Deviation: {eval_stats['std']:.2f}")
 print(f"Min: {eval_stats['min']}, Max: {eval_stats['max']}")
 
 plot_rewards(q_rewards, rand_rewards)
